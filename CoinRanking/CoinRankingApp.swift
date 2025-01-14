@@ -6,12 +6,26 @@
 //
 
 import SwiftUI
+import SDWebImageSVGCoder
+import SDWebImage
 
 @main
 struct CoinRankingApp: App {
+
+    init() {
+           setUpDependencies() // Initialize SVGCoder
+       }
     var body: some Scene {
         WindowGroup {
             HomeView()
         }
+    }
+}
+
+// Initialize SVGCoder
+private extension CoinRankingApp {
+
+    func setUpDependencies() {
+        SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
     }
 }

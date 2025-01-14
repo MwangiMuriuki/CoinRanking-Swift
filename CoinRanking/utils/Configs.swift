@@ -25,5 +25,17 @@ class Configs{
 
     }
 
+    func formattedTimeStamp(epochTimestamp: TimeInterval) -> String {
+            // Convert epoch to Date
+            let date = Date(timeIntervalSince1970: epochTimestamp)
+
+            // Format the date
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium // e.g., Jan 1, 2023
+            formatter.timeStyle = .short // e.g., 12:00 AM
+
+            return formatter.string(from: date)
+        }
+
 
 }

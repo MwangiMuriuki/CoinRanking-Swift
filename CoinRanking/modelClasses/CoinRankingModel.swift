@@ -12,6 +12,7 @@ import Foundation
 struct CoinRankingModel: Codable {
     let status: String?
     let data: CoinDataClass?
+    let message: String?
 }
 
 // MARK: - DataClass
