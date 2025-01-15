@@ -64,6 +64,7 @@ struct HomeView: View {
                     .padding(.bottom, 8)
 
 
+                // MARK: - Coin List
                 if viewModel.coinItems.isEmpty{
                     ProgressView()
                         .padding(.top, 20)

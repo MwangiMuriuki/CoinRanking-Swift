@@ -101,6 +101,8 @@ final class ServiceCaller {
                 DispatchQueue.main.async {
                     if coinDetailResponse.status == "success"{
                         completion(.success((coinDetailResponse.data?.coin)!))
+                        print("Completion Success")
+
                     }
                     else {
                         print("FAILURE: There was an error fetching coin details. Status Code - \(String(describing: coinDetailResponse.message))")
@@ -121,7 +123,6 @@ final class ServiceCaller {
         }
 
         task.resume()
-
 
     }
 

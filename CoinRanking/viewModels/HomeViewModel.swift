@@ -21,6 +21,9 @@ class HomeViewModel: ObservableObject {
     @Published var pageLimit: Int = 20
     @Published var pageLaoding: Bool = false
 
+    @Published var singleCoinData: SingleCoinData?
+    @Published var sparklineData = [String?]()
+
 
     // MARK: - Fetch All Coins
     public func fetchCoins() {
@@ -67,11 +70,10 @@ class HomeViewModel: ObservableObject {
         return savedEntities
     }
 
+    // MARK: - Add A Coin
     public func addCoinEntity(coinData: CoinData){
         favouritesDataService.addCoinHandler(coin: coinData)
     }
 
-//    public func favouritesService(coin: CoinData){
-//        favouritesDataService.favouritesHandler(coin: coin)
-//    }
+
 }

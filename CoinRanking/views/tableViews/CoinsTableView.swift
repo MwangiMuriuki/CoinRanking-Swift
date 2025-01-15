@@ -44,6 +44,7 @@ struct CoinsTableView: UIViewRepresentable {
         @Binding var coinsList: [CoinData]
         @Binding var sortingOption: SortingOption
         @ObservedObject var homeViewModel: HomeViewModel
+        var isAtBottom: Bool = false
 
         init(coinsList: Binding<[CoinData]>, sortingOption: Binding<SortingOption>, homeViewModel: HomeViewModel) {
             self._coinsList = coinsList
@@ -81,40 +82,40 @@ struct CoinsTableView: UIViewRepresentable {
                         } placeholder: {
                             Image(systemName: "bitcoinsign.circle.fill")
                                 .resizable()
-                                .foregroundColor(.black)
+                                .foregroundColor(.blue)
                                 .frame(width: 24, height: 24)
                         }
                         .padding(.trailing, 5)
 
-//                        if coinsList[indexPath.row].iconURL?.contains(".svg") == true{
-//                            WebImage(url: URL(string: coinsList[indexPath.row].iconURL ?? ""))
-//                                .resizable()
-//                                .frame(width: 24, height: 24)
-//                                .border(.textColorPrimary, width: 1)
-//                                .clipShape(Circle())
-//                                .padding(.trailing, 5)
-//                        }
-//                        else {
-//                            AsyncImage(url: URL(string: coinsList[indexPath.row].iconURL ?? "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg")) { image in
-//                                image.resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: 24, height: 24)
-//                                    .clipShape(Circle())
-//                            } placeholder: {
-//                                Image(systemName: "bitcoinsign.circle.fill")
-//                                    .resizable()
-//                                    .frame(width: 24, height: 24)
-//                            }
-//                            .padding(.trailing, 5)
-//                        }
+                        //                        if coinsList[indexPath.row].iconURL?.contains(".svg") == true{
+                        //                            WebImage(url: URL(string: coinsList[indexPath.row].iconURL ?? ""))
+                        //                                .resizable()
+                        //                                .frame(width: 24, height: 24)
+                        //                                .border(.textColorPrimary, width: 1)
+                        //                                .clipShape(Circle())
+                        //                                .padding(.trailing, 5)
+                        //                        }
+                        //                        else {
+                        //                            AsyncImage(url: URL(string: coinsList[indexPath.row].iconURL ?? "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg")) { image in
+                        //                                image.resizable()
+                        //                                    .aspectRatio(contentMode: .fill)
+                        //                                    .frame(width: 24, height: 24)
+                        //                                    .clipShape(Circle())
+                        //                            } placeholder: {
+                        //                                Image(systemName: "bitcoinsign.circle.fill")
+                        //                                    .resizable()
+                        //                                    .frame(width: 24, height: 24)
+                        //                            }
+                        //                            .padding(.trailing, 5)
+                        //                        }
 
-//                        WebView(request: URLRequest(url: URL(string: coinsList[indexPath.row].iconURL ?? "")!))
-//                            .frame(width: 24, height: 24)
-//                            .padding(.trailing, 5)
-////
-//                        WKWebView(url: URL(string: coinsList[indexPath.row].iconURL ?? ""))
-//                            .frame(width: 24, height: 24)
-//                            .padding(.trailing, 5)
+                        //                        WebView(request: URLRequest(url: URL(string: coinsList[indexPath.row].iconURL ?? "")!))
+                        //                            .frame(width: 24, height: 24)
+                        //                            .padding(.trailing, 5)
+                        ////
+                        //                        WKWebView(url: URL(string: coinsList[indexPath.row].iconURL ?? ""))
+                        //                            .frame(width: 24, height: 24)
+                        //                            .padding(.trailing, 5)
 
 
                         VStack(alignment:.leading, spacing:2, content: {
@@ -172,7 +173,6 @@ struct CoinsTableView: UIViewRepresentable {
                             })
                             .frame(maxWidth: .infinity, alignment: .trailing)
 
-
                         }
 
                     })
@@ -208,7 +208,7 @@ struct CoinsTableView: UIViewRepresentable {
         func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
         -> UISwipeActionsConfiguration? {
             let favouriteAction = UIContextualAction(style: .normal, title: nil) { action, view, completionHandler in
-//                self.homeViewModel.favouritesService(coin: self.coinsList[indexPath.row])
+                //                self.homeViewModel.favouritesService(coin: self.coinsList[indexPath.row])
                 self.homeViewModel.addCoinEntity(coinData: self.coinsList[indexPath.row])
 
                 completionHandler(true)
@@ -219,22 +219,31 @@ struct CoinsTableView: UIViewRepresentable {
             return configuration
         }
 
-        func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            guard let tableView = scrollView as? UITableView else { return }
 
-            if indexPath.row == self.coinsList.count - 1 {
-                if self.homeViewModel.pageLimit < 100 {
-                    homeViewModel.pageLimit = homeViewModel.pageLimit + 20
-                    print("Limit: \(self.homeViewModel.pageLimit)")
+            let offsetY = scrollView.contentOffset.y
+            let contentHeight = scrollView.contentSize.height
+            let frameHeight = scrollView.frame.size.height
+
+            if offsetY > contentHeight - frameHeight - 10 {
+                if !isAtBottom, let lastVisibleIndexPath = tableView.indexPathsForVisibleRows?.last,
+                   lastVisibleIndexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
+                    isAtBottom = true
                     DispatchQueue.main.async {
-                        self.homeViewModel.fetchCoins()
+                        self.homeViewModel.pageLimit += 20
+                        if self.homeViewModel.pageLimit < 120 {
+                            self.homeViewModel.fetchCoins()
+                            print("Reached bottom: \(self.homeViewModel.pageLimit)")
+                        }
+                        else{
+                            print("Reached Limit")
+                        }
                     }
                 }
-                else {
-                    print("Limit Reached")
-                }
-
+            } else {
+                isAtBottom = false
             }
-
         }
 
     }

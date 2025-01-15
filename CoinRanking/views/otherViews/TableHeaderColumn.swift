@@ -67,7 +67,6 @@ struct TableHeaderColumn: View {
             .onTapGesture {
                 withAnimation(.default){
 
-//                    homeViewModel.sortingOption = homeViewModel.sortingOption == .price ? .priceReversed : .price
                     if homeViewModel.sortingOption == .price {
                         homeViewModel.sortingOption = .priceReversed
                         homeViewModel.coinItems = homeViewModel.filterCoins(coins: coinsList, sortOption: homeViewModel.sortingOption)
@@ -101,7 +100,6 @@ struct TableHeaderColumn: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
             .onTapGesture {
                 withAnimation(.default){
-//                    homeViewModel.sortingOption = homeViewModel.sortingOption == .the24HVolume ? .the24HVolumeReversed : .the24HVolume
 
                     if homeViewModel.sortingOption == .the24HVolume {
                         homeViewModel.sortingOption = .the24HVolumeReversed
